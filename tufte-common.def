@@ -417,25 +417,25 @@
 %%
 % \RaggedRight allows hyphenation
 
-\setlength{\parindent}{1.0pc}%
+\setlength{\parindent}{1.1pc}%
 \setlength{\parskip}{0pt}%
 \RequirePackage{ragged2e}
 \setlength{\RaggedRightRightskip}{\z@ plus 0.08\hsize}
 
 % Paragraph indentation and separation for normal text
 \newcommand{\@tufte@reset@par}{%
-  \setlength{\RaggedRightParindent}{1.0pc}%
-  \setlength{\JustifyingParindent}{1.0pc}%
-  \setlength{\parindent}{1pc}%
+  \setlength{\RaggedRightParindent}{1.1pc}%
+  \setlength{\JustifyingParindent}{1.1pc}%
+  \setlength{\parindent}{1.1pc}%
   \setlength{\parskip}{0pt}%
 }
 \@tufte@reset@par
 
 % Paragraph indentation and separation for marginal text
 \newcommand{\@tufte@margin@par}{%
-  \setlength{\RaggedRightParindent}{0.5pc}%
-  \setlength{\JustifyingParindent}{0.5pc}%
-  \setlength{\parindent}{0.5pc}%
+  \setlength{\RaggedRightParindent}{0.7pc}%
+  \setlength{\JustifyingParindent}{0.7pc}%
+  \setlength{\parindent}{0.7pc}%
   \setlength{\parskip}{0pt}%
 }
 
@@ -998,6 +998,10 @@
   \fi
 }
 
+\newcommand{\markernote}[1]{%
+  \hspace{-0.2pc}\makebox[\parindent]{#1}\hspace{0.2pc}\ignorespaces
+}
+
 \renewcommand\@footnotetext[2][0pt]{%
   \marginpar{%
     \hbox{}\vspace*{#1}%
@@ -1009,9 +1013,7 @@
        \csname p@footnote\endcsname\@thefnmark%
     }%
     \color@begingroup%
-       \@makefntext{%
-         \ignorespaces#2%
-       }%
+      \ignorespaces{\markernote{\raisebox{0.35ex}{\@tufte@sidenote@font\scriptsize\@thefnmark}}\footnotelayout#2}%
     \color@endgroup%
   }%
 }%
@@ -1081,6 +1083,31 @@
 \newcommand{\sidenote}{\optparams{\@tufte@sidenote}{[][0pt]}}
 \renewcommand{\footnote}{\optparams{\@tufte@sidenote}{[][0pt]}}
 
+\providecommand{\marginnotelayout}{\@tufte@marginnote@font\@tufte@marginnote@justification}
+
+\newcommand\admonito[3][0pt]{%
+  \ifthenelse{\boolean{@tufte@loadnatbib}}{%
+    \let\cite\@tufte@infootnote@cite%   use the in-sidenote \cite command
+  }{}%
+  \gdef\@tufte@citations{}%           clear out any old citations
+
+  \marginpar{%
+    \hbox{}\vspace*{#1}%
+    \def\baselinestretch {\setspace@singlespace}%
+    \reset@font\footnotesize%
+    \@tufte@margin@par% use parindent and parskip settings for marginal text
+    \vspace*{-1\baselineskip}\noindent%
+    \color@begingroup%
+      \ignorespaces{\markernote{\raisebox{0.2ex}{\tiny#2}}\marginnotelayout#3}%
+    \color@endgroup%
+  }%
+  \@tufte@print@citations%            print any citations
+  \ifthenelse{\boolean{@tufte@loadnatbib}}{%
+    \let\cite\@tufte@normal@cite%       go back to using normal in-text \cite command
+  }{}%
+}
+
+
 %%
 % Sidenote without the footnote mark
 
@@ -1089,13 +1116,12 @@
     \let\cite\@tufte@infootnote@cite%   use the in-sidenote \cite command
   }{}%
   \gdef\@tufte@citations{}%           clear out any old citations
-  \marginpar{\hbox{}\vspace*{#1}\@tufte@marginnote@font\@tufte@marginnote@justification\@tufte@margin@par\vspace*{-1\baselineskip}\noindent #2}%
+  \marginpar{\hbox{}\vspace*{#1}\@tufte@marginnote@font\@tufte@marginnote@justification\@tufte@margin@par#2}%
   \@tufte@print@citations%            print any citations
   \ifthenelse{\boolean{@tufte@loadnatbib}}{%
     \let\cite\@tufte@normal@cite%       go back to using normal in-text \cite command
   }{}%
 }
-
 
 %%
 % The placeins package provides the \FloatBarrier command.  This forces
